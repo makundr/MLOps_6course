@@ -1,0 +1,16 @@
+data:
+  source_files:
+    - "data/source/motor_data11-14lats.csv"
+    - "data/source/motor_data14-2018.csv"
+  time_column: "INSR_BEGIN"
+  target_column: "HAS_CLAIM"   # создаётся из CLAIM_PAID: 1 если была выплата, иначе 0
+  csv_separator: ","
+
+collection:
+  batch_size: 100000
+  raw_dir: "data/raw"
+  state_file: "data/raw/state.json"
+
+preparation:
+  test_size: 0.2
+  processed_dir: "data/processed"

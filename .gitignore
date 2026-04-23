@@ -1,8 +1,8 @@
 venv/
-data/raw/
-data/processed/
+data/
 *.csv
 models/
 logs/
 __pycache__/
 reports/
+.DS_Store

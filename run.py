@@ -65,7 +65,6 @@ def mode_summary():
         "=" * 60,
     ]
 
-    # Качество данных
     quality_files = sorted(Path("reports").glob("quality_batch_*.json"))
     lines.append(f"\nБатчей обработано: {len(quality_files)}")
     for qf in quality_files:
@@ -78,7 +77,6 @@ def mode_summary():
             f"дубликаты={q['duplicates']}"
         )
 
-    # Метрики моделей
     if os.path.exists("models/metrics_history.json"):
         with open("models/metrics_history.json") as f:
             history = json.load(f)
@@ -89,7 +87,6 @@ def mode_summary():
                 auc = f"  auc={m['auc']:.3f}" if m.get("auc") else ""
                 lines.append(f"    {name}: acc={m['accuracy']:.3f}  f1_claim={m['f1_claim']:.3f}{auc}")
 
-    # Производительность
     if os.path.exists("logs/performance.jsonl"):
         with open("logs/performance.jsonl") as f:
             records = [json.loads(l) for l in f if l.strip()]
@@ -120,15 +117,13 @@ if __name__ == "__main__":
 
     if args.mode == "update":
         result = mode_update()
-        print(result)
         sys.exit(0 if result else 1)
 
     elif args.mode == "inference":
         if not args.file:
-            print("Укажите файл")
+            print("Укажите файл: python run.py -mode inference -file <path>")
             sys.exit(1)
-        out = mode_inference(args.file)
-        print(out)
+        mode_inference(args.file)
 
     elif args.mode == "summary":
         mode_summary()

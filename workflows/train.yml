@@ -1,0 +1,51 @@
+name: Train Model
+
+# Обязательный пункт 1a-i: автозапуск при push и pull request в main
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Получаем код репозитория
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Обязательный пункт 1a-ii: корректная установка окружения
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # 3. Генерируем синтетические данные (реальный датасет не хранится в репо)
+      - name: Generate sample data
+        run: python create_sample_data.py
+
+      # 4. Обязательный пункт 1a-iii: успешное обучение модели
+      - name: Run training batch
+        run: python run.py -mode update
+
+      # 5. Генерируем сводный отчёт
+      - name: Generate summary report
+        run: python run.py -mode summary
+
+      # 6. Обязательный пункт 2a: сохранение логов и артефактов обучения
+      - name: Upload training artifacts
+        if: always()   # загружаем даже при падении — чтобы видеть логи ошибок
+        uses: actions/upload-artifact@v4
+        with:
+          name: training-artifacts-${{ github.run_number }}
+          path: |
+            reports/
+            models/metrics_history.json
+            logs/
+          retention-days: 30
